@@ -40,7 +40,7 @@ def get_arguments():
     parser.add_argument('--db', action="store", dest="dbname")
 
     args = parser.parse_args()
-    print('%s%s' % ('--> ', args))
+    # print('%s%s' % ('--> ', args))
 
     if args.server is not None:
         server = args.server
@@ -83,7 +83,7 @@ if __name__ == '__main__':
 
     print()
     print('--> odoo_web2py_connector.py...')
-    print('--> server:', server)
+    # print('--> server:', server)
 
     get_arguments()
 
@@ -91,6 +91,13 @@ if __name__ == '__main__':
     start = time()
 
     server = xmlrpclib.ServerProxy(server + '/odoo_web2py_connector/xmlrpc/call/xmlrpc')
+
+    print('-->', server, username)
+    print('--> Executing user_check()...')
+    print()
+    print(str(server.user_check(username,
+                                password
+                                )))
 
     print()
     print('--> odoo_web2py_connector.py', '- Execution time:', secondsToStr(time() - start))
