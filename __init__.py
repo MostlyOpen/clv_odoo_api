@@ -21,5 +21,3 @@ from erppeek import *
 
 from clv_tag import *
 from clv_file import *
-from odoo_web2py_connector.py import *
-from survey.py import *
