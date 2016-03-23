@@ -28,7 +28,7 @@ from erppeek import *
 import sqlite3
 
 
-def export_clv_tag_sqlite(client, args, db_path):
+def clv_tag_export_sqlite(client, args, db_path):
 
     table_name = 'clv_tag'
 
@@ -68,20 +68,65 @@ def export_clv_tag_sqlite(client, args, db_path):
                            )
                        VALUES(?,?,?,?)''',
                        (tag.id,
-                        tag.code,
                         tag.name,
+                        tag.code,
                         tag.notes
                         )
                        )
 
-    # data = cursor.execute('''
-    #     SELECT * FROM ''' + table_name + ''';
-    # ''')
+    conn.commit()
+    conn.close()
 
-    # print(data)
-    # print([field[0] for field in cursor.description])
-    # for row in cursor:
-    #     print(row)
+    print()
+    print('--> tag_count: ', tag_count)
+
+
+def clv_tag_import_sqlite(client, args, db_path):
+
+    table_name = 'clv_tag'
+
+    conn = sqlite3.connect(db_path)
+    conn.text_factory = str
+
+    cursor = conn.cursor()
+
+    cursor2 = conn.cursor()
+
+    data = cursor.execute('''
+        SELECT
+            id,
+            name,
+            code,
+            notes,
+            new_id
+        FROM ''' + table_name + ''';
+    ''')
+
+    clv_tag = client.model('clv_tag')
+
+    print(data)
+    print([field[0] for field in cursor.description])
+    tag_count = 0
+    for row in cursor:
+        tag_count += 1
+
+        print(tag_count, row[0], row[1], row[2], row[3], row[4])
+
+        values = {
+            'name': row[1],
+            'code': row[2],
+            'notes': row[3],
+            }
+        tag_id = clv_tag.create(values).id
+
+        cursor2.execute('''
+                       UPDATE ''' + table_name + '''
+                       SET new_id = ?
+                       WHERE id = ?;''',
+                        (tag_id,
+                         row[0]
+                         )
+                        )
 
     conn.commit()
     conn.close()
