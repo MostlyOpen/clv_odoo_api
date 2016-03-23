@@ -26,9 +26,10 @@ import getpass
 from erppeek import *
 
 import sqlite3
+import re
 
 
-def export_clv_file_category_sqlite(client, args, db_path):
+def clv_file_category_export_sqlite(client, args, db_path):
 
     table_name = 'clv_file_category'
 
@@ -76,20 +77,11 @@ def export_clv_file_category_sqlite(client, args, db_path):
                        VALUES(?,?,?,?,?)''',
                        (file_category.id,
                         parent_id,
-                        file_category.code,
                         file_category.name,
+                        file_category.code,
                         file_category.notes
                         )
                        )
-
-    # data = cursor.execute('''
-    #     SELECT * FROM ''' + table_name + ''';
-    # ''')
-
-    # print(data)
-    # print([field[0] for field in cursor.description])
-    # for row in cursor:
-    #     print(row)
 
     conn.commit()
     conn.close()
@@ -98,7 +90,63 @@ def export_clv_file_category_sqlite(client, args, db_path):
     print('--> file_category_count: ', file_category_count)
 
 
-def export_clv_file_sqlite(client, args, db_path):
+def clv_file_category_import_sqlite(client, args, db_path):
+
+    table_name = 'clv_file_category'
+
+    conn = sqlite3.connect(db_path)
+    conn.text_factory = str
+
+    cursor = conn.cursor()
+
+    cursor2 = conn.cursor()
+
+    data = cursor.execute('''
+        SELECT
+            id,
+            parent_id,
+            name,
+            code,
+            notes,
+            new_id
+        FROM ''' + table_name + ''';
+    ''')
+
+    clv_file_category = client.model('clv_file.category')
+
+    print(data)
+    print([field[0] for field in cursor.description])
+    file_category_count = 0
+    for row in cursor:
+        file_category_count += 1
+
+        print(file_category_count, row[0], row[1], row[2], row[3], row[4])
+
+        values = {
+            'parent_id': row[1],
+            'name': row[2],
+            'code': row[3],
+            'notes': row[4],
+            }
+        category_id = clv_file_category.create(values).id
+
+        cursor2.execute('''
+                       UPDATE ''' + table_name + '''
+                       SET new_id = ?
+                       WHERE id = ?;''',
+                        (category_id,
+                         row[0]
+                         )
+                        )
+
+    conn.commit()
+    conn.close()
+
+    print()
+    print('--> file_category_count: ', file_category_count)
+
+
+def clv_file_export_sqlite(client, args, db_path):
 
     table_name = 'clv_file'
 
@@ -178,14 +226,196 @@ def export_clv_file_sqlite(client, args, db_path):
                         )
                        )
 
-    # data = cursor.execute('''
-    #     SELECT * FROM ''' + table_name + ''';
-    # ''')
+    conn.commit()
+    conn.close()
 
-    # print(data)
-    # print([field[0] for field in cursor.description])
-    # for row in cursor:
-    #     print(row)
+    print()
+    print('--> file_count: ', file_count)
+
+
+def clv_file_import_sqlite(client, args, db_path):
+
+    table_name = 'clv_file'
+    category_table_name = 'clv_file_category'
+    tag_table_name = 'clv_tag'
+
+    conn = sqlite3.connect(db_path)
+    conn.text_factory = str
+
+    cursor = conn.cursor()
+
+    cursor2 = conn.cursor()
+
+    data = cursor.execute('''
+        SELECT
+            id,
+            name,
+            alias,
+            code,
+            description,
+            notes,
+            date_inclusion,
+            active,
+            url,
+            ct_url,
+            parent_id,
+            category_ids,
+            tag_ids,
+            image,
+            new_id
+        FROM ''' + table_name + ''';
+    ''')
+
+    clv_file = client.model('clv_file')
+
+    print(data)
+    print([field[0] for field in cursor.description])
+    file_count = 0
+    for row in cursor:
+        file_count += 1
+
+        print(file_count, row[0], row[1], row[2], row[3], '', '',
+              row[6], row[7], row[8], row[9], row[10], row[11], row[12], '', row[14])
+
+        values = {
+            'name': row[1],
+            'alias': row[2],
+            'code': row[3],
+            'description': row[4],
+            'notes': row[5],
+            'date_inclusion': row[6],
+            'active': row[7],
+            'url': row[8],
+            'ct_url': row[9],
+            'image': row[13]
+            }
+        file_id = clv_file.create(values).id
+
+        cursor2.execute('''
+                       UPDATE ''' + table_name + '''
+                       SET new_id = ?
+                       WHERE id = ?;''',
+                        (file_id,
+                         row[0]
+                         )
+                        )
+
+        if row[11] != '[]':
+            category_ids = row[11].split(',')
+            new_category_ids = []
+            for x in range(0, len(category_ids)):
+
+                category_id = int(re.sub('[^0-9]', '', category_ids[x]))
+                cursor2.execute(
+                    '''
+                    SELECT new_id
+                    FROM ''' + category_table_name + '''
+                    WHERE id = ?;''',
+                    (category_id,
+                     )
+                    )
+                new_category_id = cursor2.fetchone()[0]
+
+                values = {
+                    'category_ids': [(4, new_category_id)],
+                    }
+                clv_file.write(file_id, values)
+
+                new_category_ids.append(new_category_id)
+
+            print('>>>>>', row[11], new_category_ids)
+
+        if row[12] != '[]':
+
+            tag_ids = row[12].split(',')
+            new_tag_ids = []
+            for x in range(0, len(tag_ids)):
+                tag_id = int(re.sub('[^0-9]', '', tag_ids[x]))
+                cursor2.execute(
+                    '''
+                    SELECT new_id
+                    FROM ''' + tag_table_name + '''
+                    WHERE id = ?;''',
+                    (tag_id,
+                     )
+                    )
+                new_tag_id = cursor2.fetchone()[0]
+
+                values = {
+                    'tag_ids': [(4, new_tag_id)],
+                    }
+                clv_file.write(file_id, values)
+
+                new_tag_ids.append(new_tag_id)
+
+            print('>>>>>', row[12], new_tag_ids)
+
+    conn.commit()
+    conn.close()
+
+    print()
+    print('--> file_count: ', file_count)
+
+
+def clv_file_import_parent_id_sqlite(client, args, db_path):
+
+    table_name = 'clv_file'
+
+    conn = sqlite3.connect(db_path)
+    conn.text_factory = str
+
+    cursor = conn.cursor()
+
+    cursor2 = conn.cursor()
+
+    data = cursor.execute('''
+        SELECT
+            id,
+            name,
+            alias,
+            code,
+            description,
+            notes,
+            date_inclusion,
+            active,
+            url,
+            ct_url,
+            parent_id,
+            category_ids,
+            tag_ids,
+            image,
+            new_id
+        FROM ''' + table_name + '''
+        WHERE parent_id != 0;
+    ''')
+
+    clv_file = client.model('clv_file')
+
+    print(data)
+    print([field[0] for field in cursor.description])
+    file_count = 0
+    for row in cursor:
+        file_count += 1
+
+        print(file_count, row[0], row[1], row[2], row[3], '', '',
+              row[6], row[7], row[8], row[9], row[10], row[11], row[12], '', row[14])
+
+        cursor2.execute(
+            '''
+            SELECT new_id
+            FROM ''' + table_name + '''
+            WHERE id = ?;''',
+            (row[10],
+             )
+            )
+        new_parent_id = cursor2.fetchone()[0]
+
+        print('>>>>>', row[0], row[14], row[10], new_parent_id)
+
+        values = {
+            'parent_id': new_parent_id,
+            }
+        clv_file.write(row[14], values)
 
     conn.commit()
     conn.close()
