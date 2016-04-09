@@ -52,6 +52,37 @@ def get_abcfarma_medicament_list_id(client, list_name):
     return abcfarma_medicament_list_id
 
 
+def clv_abcfarma_medicament_list_unlink(client, list_name):
+
+    medicament_list_id = get_abcfarma_medicament_list_id(client, list_name)
+
+    clv_abcfarma_medicament_list_item = client.model('clv_abcfarma_medicament.list.item')
+    medicament_list_item_browse = clv_abcfarma_medicament_list_item.browse(
+        [('list_id', '=', medicament_list_id),
+         ])
+
+    i = 0
+    for medicament_list_item in medicament_list_item_browse:
+        i += 1
+        print(i, medicament_list_item.medicament_id.name.encode('utf-8'))
+
+        clv_abcfarma_medicament_list_item.unlink(medicament_list_item.id)
+
+    clv_abcfarma_medicament_list = client.model('clv_abcfarma_medicament.list')
+    medicament_list_browse = clv_abcfarma_medicament_list.browse(
+        [('id', '=', medicament_list_id),
+         ])
+
+    for medicament_list in medicament_list_browse:
+        i += 1
+        print()
+        print(i, medicament_list.name.encode('utf-8'))
+
+        clv_abcfarma_medicament_list.unlink(medicament_list.id)
+
+    print('--> i: ', i)
+
+
 def clv_abcfarma_import_new(client, file_name, list_name, updt_medicament_data, updt_item_data):
 
     medicament_list_id = get_abcfarma_medicament_list_id(client, list_name)
@@ -251,15 +282,20 @@ if __name__ == '__main__':
 
     client = erppeek.Client(server, dbname, username, password)
 
-    file_name = '/opt/openerp/abcfarma/TABELA_2015_09.dbf'
     list_name = 'TABELA_2015_09'
-    updt_medicament_data = True
-    updt_item_data = True
-    print('-->', client, file_name, list_name,
-          updt_medicament_data, updt_item_data)
-    print('--> Executing clv_abcfarma_import_new()...')
-    clv_abcfarma_import_new(client, file_name, list_name,
-                            updt_medicament_data, updt_item_data)
+    print('-->', client, list_name)
+    print('--> Executing clv_abcfarma_medicament_list_unlink()...')
+    clv_abcfarma_medicament_list_unlink(client, list_name)
+
+    # file_name = '/opt/openerp/abcfarma/TABELA_2015_09.dbf'
+    # list_name = 'TABELA_2015_09'
+    # updt_medicament_data = True
+    # updt_item_data = True
+    # print('-->', client, file_name, list_name,
+    #       updt_medicament_data, updt_item_data)
+    # print('--> Executing clv_abcfarma_import_new()...')
+    # clv_abcfarma_import_new(client, file_name, list_name,
+    #                         updt_medicament_data, updt_item_data)
 
     print()
     print('--> clv_abcfarma_medicament.py', '- Execution time:', secondsToStr(time() - start))
