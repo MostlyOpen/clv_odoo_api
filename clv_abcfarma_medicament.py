@@ -298,15 +298,15 @@ if __name__ == '__main__':
 
     client = erppeek.Client(server, dbname, username, password)
 
-    medicament_args = []
-    print('-->', client, medicament_args)
-    print('--> Executing clv_abcfarma_medicament_unlink()...')
-    clv_abcfarma_medicament_unlink(client, medicament_args)
-
     # list_name = 'TABELA_2015_09'
     # print('-->', client, list_name)
     # print('--> Executing clv_abcfarma_medicament_list_unlink()...')
     # clv_abcfarma_medicament_list_unlink(client, list_name)
+
+    # medicament_args = []
+    # print('-->', client, medicament_args)
+    # print('--> Executing clv_abcfarma_medicament_unlink()...')
+    # clv_abcfarma_medicament_unlink(client, medicament_args)
 
     # file_name = '/opt/openerp/abcfarma/TABELA_2015_09.dbf'
     # list_name = 'TABELA_2015_09'
