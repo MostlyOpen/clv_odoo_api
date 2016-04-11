@@ -83,6 +83,22 @@ def clv_abcfarma_medicament_list_unlink(client, list_name):
     print('--> i: ', i)
 
 
+def clv_abcfarma_medicament_unlink(client, args):
+
+    clv_abcfarma_medicament = client.model('clv_abcfarma_medicament')
+    medicament_browse = clv_abcfarma_medicament.browse(args)
+
+    i = 0
+    for medicament in medicament_browse:
+        i += 1
+        print()
+        print(i, medicament.name.encode('utf-8'))
+
+        clv_abcfarma_medicament.unlink(medicament.id)
+
+    print('--> i: ', i)
+
+
 def clv_abcfarma_import_new(client, file_name, list_name, updt_medicament_data, updt_item_data):
 
     medicament_list_id = get_abcfarma_medicament_list_id(client, list_name)
@@ -281,6 +297,11 @@ if __name__ == '__main__':
     start = time()
 
     client = erppeek.Client(server, dbname, username, password)
+
+    medicament_args = []
+    print('-->', client, medicament_args)
+    print('--> Executing clv_abcfarma_medicament_unlink()...')
+    clv_abcfarma_medicament_unlink(client, medicament_args)
 
     # list_name = 'TABELA_2015_09'
     # print('-->', client, list_name)
