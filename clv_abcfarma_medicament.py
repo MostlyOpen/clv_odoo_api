@@ -80,7 +80,7 @@ def clv_abcfarma_medicament_list_unlink(client, list_name):
 
         clv_abcfarma_medicament_list.unlink(medicament_list.id)
 
-    print('--> i: ', i)
+    print('--> i: ', i - 1)
 
 
 def clv_abcfarma_medicament_unlink(client, args):
@@ -96,7 +96,7 @@ def clv_abcfarma_medicament_unlink(client, args):
 
         clv_abcfarma_medicament.unlink(medicament.id)
 
-    print('--> i: ', i)
+    print('--> i: ', i - 1)
 
 
 def clv_abcfarma_import_new(client, file_name, list_name, updt_medicament_data, updt_item_data):
