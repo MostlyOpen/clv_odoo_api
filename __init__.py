@@ -19,5 +19,7 @@
 
 from erppeek import *
 
+from res_users import *
+
 from clv_tag import *
 from clv_file import *
