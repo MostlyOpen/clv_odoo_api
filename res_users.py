@@ -28,6 +28,68 @@ from erppeek import *
 import sqlite3
 
 
+def res_users_export_sqlite(client, args, db_path):
+
+    table_name = 'res_users'
+
+    conn = sqlite3.connect(db_path)
+    conn.text_factory = str
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute('''DROP TABLE ''' + table_name + ''';''')
+    except Exception as e:
+        print('------->', e)
+    cursor.execute('''
+        CREATE TABLE ''' + table_name + ''' (
+            id INTEGER NOT NULL PRIMARY KEY,
+            name,
+            login,
+            password_crypt,
+            email,
+            phone,
+            mobile,
+            new_id INTEGER
+            );
+    ''')
+
+    res_users = client.model('res.users')
+    users_browse = res_users.browse(args)
+
+    users_count = 0
+    for users_reg in users_browse:
+        users_count += 1
+
+        print(users_count, users_reg.id, users_reg.login, users_reg.name.encode("utf-8"))
+
+        cursor.execute('''
+                       INSERT INTO ''' + table_name + '''(
+                           id,
+                           name,
+                           login,
+                           password_crypt,
+                           email,
+                           phone,
+                           mobile
+                           )
+                       VALUES(?,?,?,?,?,?,?)''',
+                       (users_reg.id,
+                        users_reg.name,
+                        users_reg.login,
+                        users_reg.password_crypt,
+                        users_reg.email,
+                        users_reg.phone,
+                        users_reg.mobile,
+                        )
+                       )
+
+    conn.commit()
+    conn.close()
+
+    print()
+    print('--> users_count: ', users_count)
+
+
 def get_arguments():
 
     global server
