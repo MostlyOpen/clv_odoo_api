@@ -67,16 +67,14 @@ def res_users_export_sqlite(client, args, db_path):
                            id,
                            name,
                            login,
-                           password_crypt,
                            email,
                            phone,
                            mobile
                            )
-                       VALUES(?,?,?,?,?,?,?)''',
+                       VALUES(?,?,?,?,?,?)''',
                        (users_reg.id,
                         users_reg.name,
                         users_reg.login,
-                        users_reg.password_crypt,
                         users_reg.email,
                         users_reg.phone,
                         users_reg.mobile,
