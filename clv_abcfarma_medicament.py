@@ -44,7 +44,7 @@ def get_abcfarma_medicament_list_id(client, list_name):
     if abcfarma_medicament_list_id == []:
         values = {
             'name': list_name,
-            }
+        }
         abcfarma_medicament_list_id = clv_abcfarma_medicament_list.create(values).id
     else:
         abcfarma_medicament_list_id = abcfarma_medicament_list_id[0]
@@ -164,7 +164,7 @@ def clv_abcfarma_import_new(client, file_name, list_name, updt_medicament_data, 
         abcfarma_medicament_id = abcfarma_medicament_browse.id
 
         values = {
-            'name': MED_ABC,
+            'name': '/',
             'code': MED_ABC,
             'med_abc': MED_ABC,
             'med_ctr': MED_CTR,
@@ -176,7 +176,7 @@ def clv_abcfarma_import_new(client, file_name, list_name, updt_medicament_data, 
             'med_negpos': MED_NEGPOS,
             'med_gene': MED_GENE,
             'med_princi': MED_PRINCI,
-            }
+        }
 
         if abcfarma_medicament_id != []:
             found += 1
@@ -220,10 +220,10 @@ def clv_abcfarma_import_new(client, file_name, list_name, updt_medicament_data, 
             'exp_13': EXP_13,
             'med_regims': MED_REGIMS,
             'med_varpre': MED_VARPRE,
-            }
+        }
         abcfarma_medicament_list_item = clv_abcfarma_medicament_list_item.create(values)
 
-        print('>>>>>', abcfarma_medicament_list_item)
+        print('>>>>>', abcfarma_medicament_list_item.id)
 
         rownum += 1
 
@@ -271,7 +271,7 @@ def get_arguments():
 
 def secondsToStr(t):
 
-    return "%d:%02d:%02d.%03d" % reduce(lambda ll, b: divmod(ll[0], b) + ll[1:], [(t*1000,), 1000, 60, 60])
+    return "%d:%02d:%02d.%03d" % reduce(lambda ll, b: divmod(ll[0], b) + ll[1:], [(t * 1000,), 1000, 60, 60])
 
 
 if __name__ == '__main__':
@@ -308,10 +308,32 @@ if __name__ == '__main__':
     # print('--> Executing clv_abcfarma_medicament_unlink()...')
     # clv_abcfarma_medicament_unlink(client, medicament_args)
 
-    # file_name = '/opt/openerp/abcfarma/TABELA_2015_09.dbf'
-    # list_name = 'TABELA_2015_09'
+    # ########## 2016-05-06 ##########
+
+    # file_name = '/opt/openerp/abcfarma/TABELA_2016_04.dbf'
+    # list_name = 'TABELA_2016_04'
     # updt_medicament_data = True
     # updt_item_data = True
+    # print('-->', client, file_name, list_name,
+    #       updt_medicament_data, updt_item_data)
+    # print('--> Executing clv_abcfarma_import_new()...')
+    # clv_abcfarma_import_new(client, file_name, list_name,
+    #                         updt_medicament_data, updt_item_data)
+
+    # file_name = '/opt/openerp/abcfarma/TABELA_2016_05.dbf'
+    # list_name = 'TABELA_2016_05'
+    # updt_medicament_data = True
+    # updt_item_data = True
+    # print('-->', client, file_name, list_name,
+    #       updt_medicament_data, updt_item_data)
+    # print('--> Executing clv_abcfarma_import_new()...')
+    # clv_abcfarma_import_new(client, file_name, list_name,
+    #                         updt_medicament_data, updt_item_data)
+
+    # file_name = '/opt/openerp/abcfarma/TABELA_2016_03.dbf'
+    # list_name = 'TABELA_2016_03'
+    # updt_medicament_data = False
+    # updt_item_data = False
     # print('-->', client, file_name, list_name,
     #       updt_medicament_data, updt_item_data)
     # print('--> Executing clv_abcfarma_import_new()...')
