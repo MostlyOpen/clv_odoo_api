@@ -298,48 +298,6 @@ if __name__ == '__main__':
 
     client = erppeek.Client(server, dbname, username, password)
 
-    # list_name = 'TABELA_2015_09'
-    # print('-->', client, list_name)
-    # print('--> Executing clv_abcfarma_medicament_list_unlink()...')
-    # clv_abcfarma_medicament_list_unlink(client, list_name)
-
-    # medicament_args = []
-    # print('-->', client, medicament_args)
-    # print('--> Executing clv_abcfarma_medicament_unlink()...')
-    # clv_abcfarma_medicament_unlink(client, medicament_args)
-
-    # ########## 2016-05-06 ##########
-
-    # file_name = '/opt/openerp/abcfarma/TABELA_2016_04.dbf'
-    # list_name = 'TABELA_2016_04'
-    # updt_medicament_data = True
-    # updt_item_data = True
-    # print('-->', client, file_name, list_name,
-    #       updt_medicament_data, updt_item_data)
-    # print('--> Executing clv_abcfarma_import_new()...')
-    # clv_abcfarma_import_new(client, file_name, list_name,
-    #                         updt_medicament_data, updt_item_data)
-
-    # file_name = '/opt/openerp/abcfarma/TABELA_2016_05.dbf'
-    # list_name = 'TABELA_2016_05'
-    # updt_medicament_data = True
-    # updt_item_data = True
-    # print('-->', client, file_name, list_name,
-    #       updt_medicament_data, updt_item_data)
-    # print('--> Executing clv_abcfarma_import_new()...')
-    # clv_abcfarma_import_new(client, file_name, list_name,
-    #                         updt_medicament_data, updt_item_data)
-
-    # file_name = '/opt/openerp/abcfarma/TABELA_2016_03.dbf'
-    # list_name = 'TABELA_2016_03'
-    # updt_medicament_data = False
-    # updt_item_data = False
-    # print('-->', client, file_name, list_name,
-    #       updt_medicament_data, updt_item_data)
-    # print('--> Executing clv_abcfarma_import_new()...')
-    # clv_abcfarma_import_new(client, file_name, list_name,
-    #                         updt_medicament_data, updt_item_data)
-
     print()
     print('--> clv_abcfarma_medicament.py', '- Execution time:', secondsToStr(time() - start))
     print()
