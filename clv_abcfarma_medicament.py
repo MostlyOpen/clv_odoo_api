@@ -99,7 +99,7 @@ def clv_abcfarma_medicament_unlink(client, args):
     print('--> i: ', i - 1)
 
 
-def clv_abcfarma_import_new(client, file_name, list_name, updt_medicament_data, updt_item_data):
+def clv_abcfarma_medicament_import(client, file_name, list_name, updt_medicament_data, updt_item_data):
 
     medicament_list_id = get_abcfarma_medicament_list_id(client, list_name)
 
