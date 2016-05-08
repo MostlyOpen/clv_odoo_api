@@ -1,21 +1,22 @@
 #!/usr/bin/env python
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 ###############################################################################
-#                                                                             #
-# Copyright (C) 2016-Today  Carlos Eduardo Vercelino - CLVsol                 #
-#                                                                             #
-# This program is free software: you can redistribute it and/or modify        #
-# it under the terms of the GNU Affero General Public License as published by #
-# the Free Software Foundation, either version 3 of the License, or           #
-# (at your option) any later version.                                         #
-#                                                                             #
-# This program is distributed in the hope that it will be useful,             #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
-# GNU Affero General Public License for more details.                         #
-#                                                                             #
-# You should have received a copy of the GNU Affero General Public License    #
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#
+# Copyright (C) 2016-Today  Carlos Eduardo Vercelino - CLVsol
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
 ###############################################################################
 
 from __future__ import print_function
@@ -127,7 +128,7 @@ def clv_file_category_import_sqlite(client, args, db_path):
             'name': row[2],
             'code': row[3],
             'notes': row[4],
-            }
+        }
         category_id = clv_file_category.create(values).id
 
         cursor2.execute('''
@@ -288,7 +289,7 @@ def clv_file_import_sqlite(client, args, db_path):
             'url': row[8],
             'ct_url': row[9],
             'image': row[13]
-            }
+        }
         file_id = clv_file.create(values).id
 
         cursor2.execute('''
@@ -313,12 +314,12 @@ def clv_file_import_sqlite(client, args, db_path):
                     WHERE id = ?;''',
                     (category_id,
                      )
-                    )
+                )
                 new_category_id = cursor2.fetchone()[0]
 
                 values = {
                     'category_ids': [(4, new_category_id)],
-                    }
+                }
                 clv_file.write(file_id, values)
 
                 new_category_ids.append(new_category_id)
@@ -338,12 +339,12 @@ def clv_file_import_sqlite(client, args, db_path):
                     WHERE id = ?;''',
                     (tag_id,
                      )
-                    )
+                )
                 new_tag_id = cursor2.fetchone()[0]
 
                 values = {
                     'tag_ids': [(4, new_tag_id)],
-                    }
+                }
                 clv_file.write(file_id, values)
 
                 new_tag_ids.append(new_tag_id)
@@ -407,14 +408,14 @@ def clv_file_import_parent_id_sqlite(client, args, db_path):
             WHERE id = ?;''',
             (row[10],
              )
-            )
+        )
         new_parent_id = cursor2.fetchone()[0]
 
         print('>>>>>', row[0], row[14], row[10], new_parent_id)
 
         values = {
             'parent_id': new_parent_id,
-            }
+        }
         clv_file.write(row[14], values)
 
     conn.commit()
@@ -463,7 +464,7 @@ def get_arguments():
 
 def secondsToStr(t):
 
-    return "%d:%02d:%02d.%03d" % reduce(lambda ll, b: divmod(ll[0], b) + ll[1:], [(t*1000,), 1000, 60, 60])
+    return "%d:%02d:%02d.%03d" % reduce(lambda ll, b: divmod(ll[0], b) + ll[1:], [(t * 1000,), 1000, 60, 60])
 
 
 if __name__ == '__main__':
