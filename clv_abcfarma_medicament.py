@@ -27,6 +27,8 @@ import getpass
 from erppeek import *
 from dbfpy import dbf
 
+import sqlite3
+
 
 def autoIncrement(start=0, step=1):
     i = start
@@ -230,6 +232,151 @@ def clv_abcfarma_medicament_import(client, file_name, list_name, updt_medicament
     print('--> rownum: ', rownum - 1)
     print('--> found: ', found)
     print('--> not_found: ', not_found)
+
+
+def clv_abcfarma_medicament_export_sqlite(client, args, db_path):
+
+    table_name = 'clv_abcfarma_medicament'
+
+    conn = sqlite3.connect(db_path)
+    conn.text_factory = str
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute('''DROP TABLE ''' + table_name + ''';''')
+    except Exception as e:
+        print('------->', e)
+    cursor.execute('''
+        CREATE TABLE ''' + table_name + ''' (
+            id INTEGER NOT NULL PRIMARY KEY,
+            name,
+            ean13,
+            code,
+            medicament_name,
+            concentration,
+            presentation,
+            pres_form,
+            pres_quantity,
+            pres_quantity_unit,
+            notes TEXT,
+            date_inclusion,
+            active,
+            is_product,
+            is_fraction,
+            for_hospital_use,
+            active_component INTEGER,
+            manufacturer INTEGER,
+
+            med_abc,
+            med_ctr,
+            med_lab,
+            lab_nom,
+            med_des,
+            med_apr,
+            med_barra,
+            med_gene,
+            med_negpos,
+            med_princi,
+            new_id INTEGER
+            );
+    ''')
+
+    clv_abcfarma_medicament = client.model('clv_abcfarma_medicament')
+    file_browse = clv_abcfarma_medicament.browse(args)
+
+    file_count = 0
+    for abcfarma_medicament_reg in file_browse:
+        file_count += 1
+
+        print(file_count, abcfarma_medicament_reg.id, abcfarma_medicament_reg.code,
+              abcfarma_medicament_reg.name.encode("utf-8"))
+
+        pres_form = False
+        if abcfarma_medicament_reg.pres_form:
+            pres_form = abcfarma_medicament_reg.pres_form.id
+
+        pres_quantity_unit = False
+        if abcfarma_medicament_reg.pres_quantity_unit:
+            pres_quantity_unit = abcfarma_medicament_reg.pres_quantity_unit.id
+
+        active_component = False
+        if abcfarma_medicament_reg.active_component:
+            active_component = abcfarma_medicament_reg.active_component.id
+
+        manufacturer = False
+        if abcfarma_medicament_reg.manufacturer:
+            manufacturer = abcfarma_medicament_reg.manufacturer.id
+
+        cursor.execute('''
+                       INSERT INTO ''' + table_name + '''(
+                           id,
+                           name,
+                           ean13,
+                           code,
+                           medicament_name,
+                           concentration,
+                           presentation,
+                           pres_form,
+                           pres_quantity,
+                           pres_quantity_unit,
+                           notes,
+                           date_inclusion,
+                           active,
+                           is_product,
+                           is_fraction,
+                           for_hospital_use,
+                           active_component,
+                           manufacturer,
+
+                           med_abc,
+                           med_ctr,
+                           med_lab,
+                           lab_nom,
+                           med_des,
+                           med_apr,
+                           med_barra,
+                           med_gene,
+                           med_negpos,
+                           med_princi
+                           )
+                       VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
+                       (abcfarma_medicament_reg.id,
+                        abcfarma_medicament_reg.name,
+                        abcfarma_medicament_reg.ean13,
+                        abcfarma_medicament_reg.code,
+                        abcfarma_medicament_reg.medicament_name,
+                        abcfarma_medicament_reg.concentration,
+                        abcfarma_medicament_reg.presentation,
+                        pres_form,
+                        abcfarma_medicament_reg.pres_quantity,
+                        pres_quantity_unit,
+                        abcfarma_medicament_reg.notes,
+                        abcfarma_medicament_reg.date_inclusion,
+                        abcfarma_medicament_reg.active,
+                        abcfarma_medicament_reg.is_product,
+                        abcfarma_medicament_reg.is_fraction,
+                        abcfarma_medicament_reg.for_hospital_use,
+                        active_component,
+                        manufacturer,
+
+                        abcfarma_medicament_reg.med_abc,
+                        abcfarma_medicament_reg.med_ctr,
+                        abcfarma_medicament_reg.med_lab,
+                        abcfarma_medicament_reg.lab_nom,
+                        abcfarma_medicament_reg.med_des,
+                        abcfarma_medicament_reg.med_apr,
+                        abcfarma_medicament_reg.med_barra,
+                        abcfarma_medicament_reg.med_gene,
+                        abcfarma_medicament_reg.med_negpos,
+                        abcfarma_medicament_reg.med_princi,
+                        )
+                       )
+
+    conn.commit()
+    conn.close()
+
+    print()
+    print('--> file_count: ', file_count)
 
 
 def get_arguments():

@@ -25,4 +25,5 @@ from res_users import *
 
 from clv_tag import *
 from clv_file import *
+from clv_abcfarma_medicament import *
 from fmng_entity import *
